@@ -1,0 +1,378 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'App de Saúde',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: HomeScreen(),
+    );
+  }
+}
+
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _selectedIndex = 0;
+
+  static List<Widget> _widgetOptions = <Widget>[
+    IntroductionScreen(),
+    IMCCalculator(),
+    WorkoutScreen(),
+    DietScreen(),
+    ProfileScreen(),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: _widgetOptions.elementAt(_selectedIndex),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+  items: const <BottomNavigationBarItem>[
+    BottomNavigationBarItem(
+      icon: Icon(Icons.home),
+      label: 'Início',
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.calculate),
+      label: 'IMC',
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.fitness_center),
+      label: 'Treino',
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.restaurant),
+      label: 'Dieta',
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.person),
+      label: 'Perfil',
+    ),
+  ],
+  currentIndex: _selectedIndex,
+  selectedItemColor: Colors.blue,
+  unselectedItemColor: Colors.grey.shade600,
+  onTap: _onItemTapped,
+      ),
+    );
+  }
+}
+
+class IntroductionScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Introdução'),
+      ),
+      body: Center(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Bem-vindo ao App de Saúde!',
+                style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 16.0),
+              Text(
+                'Este aplicativo foi projetado para ajudar você a acompanhar sua saúde e bem-estar. Você pode calcular seu IMC, seguir um plano de treino e um plano de dieta. Além disso, você pode personalizar seu perfil.',
+                style: TextStyle(fontSize: 18.0),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class IMCCalculator extends StatefulWidget {
+  @override
+  _IMCCalculatorState createState() => _IMCCalculatorState();
+}
+
+class _IMCCalculatorState extends State<IMCCalculator> {
+  TextEditingController heightController = TextEditingController();
+  TextEditingController weightController = TextEditingController();
+  double imc = 0.0;
+  String result = '';
+
+  void calculateIMC() {
+    double height = double.parse(heightController.text);
+    double weight = double.parse(weightController.text);
+    double heightInMeters = height / 100;
+    double calculatedIMC = weight / (heightInMeters * heightInMeters);
+
+    String resultType = '';
+
+    if (calculatedIMC <= 22.0) {
+      resultType = 'Baixo peso';
+    } else if (calculatedIMC > 22.0 && calculatedIMC < 27.0) {
+      resultType = 'Peso adequado (eutrófico)';
+    } else {
+      resultType = 'Sobrepeso';
+    }
+
+    setState(() {
+      imc = calculatedIMC;
+      result = 'Seu IMC é ${imc.toStringAsFixed(2)}, $resultType';
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Calculadora de IMC'),
+      ),
+      body: Center(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextField(
+                controller: heightController,
+                decoration: InputDecoration(
+                  labelText: 'Altura (cm)',
+                ),
+                keyboardType: TextInputType.number,
+              ),
+              SizedBox(height: 16.0),
+              TextField(
+                controller: weightController,
+                decoration: InputDecoration(
+                  labelText: 'Peso (kg)',
+                ),
+                keyboardType: TextInputType.number,
+              ),
+              SizedBox(height: 16.0),
+              ElevatedButton(
+                onPressed: calculateIMC,
+                child: Text('Calcular IMC'),
+              ),
+              SizedBox(height: 16.0),
+              Text(result, style: TextStyle(fontSize: 20.0)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class WorkoutScreen extends StatefulWidget {
+  @override
+  _WorkoutScreenState createState() => _WorkoutScreenState();
+}
+
+class _WorkoutScreenState extends State<WorkoutScreen> {
+  Map<String, TextEditingController> workoutControllers = {
+    'Segunda-feira': TextEditingController(),
+    'Terça-feira': TextEditingController(),
+    'Quarta-feira': TextEditingController(),
+    'Quinta-feira': TextEditingController(),
+    'Sexta-feira': TextEditingController(),
+    'Sábado': TextEditingController(),
+    'Domingo': TextEditingController(),
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    workoutControllers['Segunda-feira']?.text = 'Peito e Tríceps';
+    workoutControllers['Terça-feira']?.text = 'Costas e Bíceps';
+    workoutControllers['Quarta-feira']?.text = 'Pernas e Ombros';
+    workoutControllers['Quinta-feira']?.text = 'Descanso ou Cardio';
+    workoutControllers['Sexta-feira']?.text = 'Peito e Tríceps';
+    workoutControllers['Sábado']?.text = 'Costas e Bíceps';
+    workoutControllers['Domingo']?.text = 'Pernas e Ombros';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Plano de Treino'),
+      ),
+      body: Center(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            children: workoutControllers.keys.map((day) {
+              return Column(
+                children: [
+                  TextField(
+                    controller: workoutControllers[day],
+                    decoration: InputDecoration(
+                      labelText: day,
+                    ),
+                  ),
+                  SizedBox(height: 16.0),
+                ],
+              );
+            }).toList(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class DietScreen extends StatefulWidget {
+  @override
+  _DietScreenState createState() => _DietScreenState();
+}
+
+class _DietScreenState extends State<DietScreen> {
+  Map<String, TextEditingController> dietControllers = {
+    'Café da Manhã': TextEditingController(),
+    'Lanche da Manhã': TextEditingController(),
+    'Almoço': TextEditingController(),
+    'Lanche da Tarde': TextEditingController(),
+    'Jantar': TextEditingController(),
+    'Ceia': TextEditingController(),
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    dietControllers['Café da Manhã']?.text = 'Aveia com frutas e iogurte';
+    dietControllers['Lanche da Manhã']?.text = 'Uma maçã ou banana';
+    dietControllers['Almoço']?.text = 'Salada de frango grelhado com legumes';
+    dietControllers['Lanche da Tarde']?.text = 'Barra de proteína ou amêndoas';
+    dietControllers['Jantar']?.text =
+        'Peixe grelhado com arroz integral e brócolis';
+    dietControllers['Ceia']?.text = 'Iogurte grego com mel';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Plano de Dieta'),
+      ),
+      body: Center(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            children: dietControllers.keys.map((meal) {
+              return Column(
+                children: [
+                  TextField(
+                    controller: dietControllers[meal],
+                    decoration: InputDecoration(
+                      labelText: meal,
+                    ),
+                  ),
+                  SizedBox(height: 16.0),
+                ],
+              );
+            }).toList(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ProfileScreen extends StatefulWidget {
+  @override
+  _ProfileScreenState createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  TextEditingController nameController = TextEditingController();
+  TextEditingController ageController = TextEditingController();
+  TextEditingController heightController = TextEditingController();
+  TextEditingController weightController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    nameController.text = 'Nome';
+    ageController.text = '25';
+    heightController.text = '170';
+    weightController.text = '70';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Perfil'),
+      ),
+      body: Center(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: InputDecoration(
+                  labelText: 'Nome',
+                ),
+              ),
+              SizedBox(height: 16.0),
+              TextField(
+                controller: ageController,
+                decoration: InputDecoration(
+                  labelText: 'Idade',
+                ),
+                keyboardType: TextInputType.number,
+              ),
+              SizedBox(height: 16.0),
+              TextField(
+                controller: heightController,
+                decoration: InputDecoration(
+                  labelText: 'Altura (cm)',
+                ),
+                keyboardType: TextInputType.number,
+              ),
+              SizedBox(height: 16.0),
+              TextField(
+                controller: weightController,
+                decoration: InputDecoration(
+                  labelText: 'Peso (kg)',
+                ),
+                keyboardType: TextInputType.number,
+              ),
+              SizedBox(height: 16.0),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {});
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Perfil salvo com sucesso!'),
+                  ));
+                },
+                child: Text('Salvar Perfil'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
